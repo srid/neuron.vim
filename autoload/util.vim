@@ -75,7 +75,11 @@ func! util#zettel_date_sorter(a, b)
 endf
 
 func! util#zettel_date_getter(z)
-	let l:date = get(a:z, 'zettelDate', ['1970-01-01'])
+    let l:datetime = get(a:z, 'Date')
+    if type(l:datetime) != type([])
+        let l:datetime = ['1970-01-01', '00:00:00']
+    endif
+	let l:date = get(l:datetime, 0, ['1970-01-01'])
 	if type(l:date) != type([])
 		let l:date = ['1970-01-01']
 	endif

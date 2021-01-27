@@ -253,10 +253,13 @@ func! neuron#refresh_cache(add_titles)
 	if !executable(g:neuron_executable)
 		echo "neuron executable not found!"
 		return
+    elseif !executable("jq")
+        echo "jq executable not found!"
+        return
 	endif
 
 	let g:_neuron_cache_add_titles = a:add_titles
-	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --uri z:zettels'
+	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query | jq -cM ".result | .vertices | to_entries | [.[].value]"'
 	if has('nvim')
 		call jobstart(l:cmd, {
 			\ 'on_stdout': function('s:refresh_cache_callback_nvim'),
@@ -293,11 +296,11 @@ func s:refresh_cache_callback_nvim(id, data, event)
 endf
 
 func! s:refresh_cache_callback(data)
+    let g:neuron_debug_enable = 1
 	if (g:neuron_debug_enable)
 		call writefile(split(a:data, "\n", 1), g:neuron_dir . 'query.json')
 	endif
-	let l:zettels = json_decode(a:data)["result"]
-
+	let l:zettels = json_decode(a:data)
 	call sort(l:zettels, function('util#zettel_date_sorter'))
 
 	let g:_neuron_zettels_titles_list = {}
@@ -306,14 +309,16 @@ func! s:refresh_cache_callback(data)
 	let g:_neuron_backlinks = {}
 
 	for z in l:zettels
-		let g:_neuron_zettels_titles_list[z['zettelID']] = z['zettelTitle']
-		call add(g:_neuron_zettels_by_id, { 'id': z['zettelID'], 'title': z['zettelTitle'], 'path': z['zettelPath'] })
-		call add(g:_neuron_zettels_search_list, z['zettelID'].":".substitute(z['zettelTitle'], ':', '-', ''))
-		let g:_neuron_backlinks[z['zettelID']] = []
+		let g:_neuron_zettels_titles_list[z['ID']] = z['Title']
+		call add(g:_neuron_zettels_by_id, { 'id': z['ID'], 'title': z['Title'], 'path': z['Path'] })
+		call add(g:_neuron_zettels_search_list, z['ID'].":".substitute(z['Title'], ':', '-', ''))
+		let g:_neuron_backlinks[z['ID']] = []
 	endfor
-
+    " TODO (noah): Fix queries.
+    " it's in PluginData
 	for z in l:zettels
-		if !empty(z['zettelQueries'])
+		if !empty(z['PluginData'])
+            for plugin in z['PluginData']
 			for l in z['zettelQueries']
 				if l[0][0] == 'ZettelQuery_ZettelById'
 					let l:key = l[0][1][0]
