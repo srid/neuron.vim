@@ -251,7 +251,7 @@ func! neuron#refresh_cache(add_titles)
 			\ 'exit_cb': function('s:refresh_cache_callback_vim'),
 			\ 'out_io': 'file',
 			\ 'out_name': g:neuron_tmp_filename,
-			\ 'err_io': 'out'
+			\ 'err_io': 'null'
 		\ }
 		if has('patch-8.1.350')
 			let l:jobopt['noblock'] = 1
@@ -315,8 +315,8 @@ func! s:refresh_backlink_cache_for_zettel(id)
 		\ })
 	elseif has('job')
 		let l:jobopt = {
-			\ 'callback': function('s:refresh_backlink_callback'),
-			\ 'out_mode': 'json'
+			\ 'out_cb': function('s:refresh_backlink_callback_vim'),
+            \ 'err_io': 'null',
 		\ }
 		if has('patch-8.1.350')
 			let l:jobopt['noblock'] = 1
@@ -333,6 +333,10 @@ endf
 func s:refresh_backlink_callback_nvim(id, data, event)
 	let l:decoded = json_decode(join(a:data))
 	call s:refresh_backlink_callback(l:decoded)
+endf
+
+func! s:refresh_backlink_callback_vim(channel, data)
+    call s:refresh_backlink_callback(json_decode(a:data))
 endf
 
 func! s:refresh_backlink_callback(data)
