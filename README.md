@@ -1,6 +1,7 @@
-# neuron.vim
+# neuron-v2.vim
 Manage your [Zettelkasten](https://neuron.zettel.page/2011401.html) with the
-help of [neuron](https://github.com/srid/neuron) in {n}vim.
+help of [neuron](https://github.com/srid/neuron) in {n}vim. This is a fork of a
+fork that supports Neuron's V2 format.
 
 (This is an actively maintaned fork of [`ihsanturk/neuron.vim`](https://github.com/ihsanturk/neuron.vim) that works with newer versions of `neuron` and changes basically everything, with extra features, commands and different options.)
 
