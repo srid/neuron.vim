@@ -1,6 +1,6 @@
 func! util#insert(zettelid, as_folgezettel)
 	if a:as_folgezettel
-		let l:formatted = "[[[".a:zettelid."]]]"
+		let l:formatted = "[[".a:zettelid."]]#"
 	else
 		let l:formatted = "[[".a:zettelid."]]"
 	endif
