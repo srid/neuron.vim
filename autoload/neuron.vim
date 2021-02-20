@@ -185,7 +185,7 @@ func! neuron#edit_zettel_new(title)
 	endif
 	let l:zettel_path = util#new_zettel_path(a:title)
 	let l:zettel_id = util#zettel_id_from_path(l:zettel_path)
-	execute "normal! ciw[[".l:zettel_id."]]#"
+	execute "normal! i[[".l:zettel_id."]]#"
 	call neuron#add_virtual_titles()
 	exec 'edit '.l:zettel_path
 	call util#add_empty_zettel_body(a:title)
@@ -199,7 +199,7 @@ endf
 
 func! neuron#edit_zettel_new_from_visual()
 	let l:prev = @p
-
+    " a test text area
 	" title from visual selection
 	execute 'normal! gv"pd'
 
