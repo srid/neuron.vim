@@ -240,7 +240,7 @@ func! neuron#refresh_cache(add_titles)
 	endif
 	
 	let g:_neuron_cache_add_titles = a:add_titles
-	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --zettels'
+	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --cached --zettels'
 	if has('nvim')
 		call jobstart(l:cmd, {
 			\ 'on_stdout': function('s:refresh_cache_callback_nvim'),
@@ -307,7 +307,7 @@ func! s:refresh_cache_callback(data)
 endf
 
 func! s:refresh_backlink_cache_for_zettel(id)
-	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --backlinks-of "'.a:id.'"'
+	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --cached --backlinks-of "'.a:id.'"'
 	if has('nvim')
 		call jobstart(l:cmd, {
 			\ 'on_stdout': function('s:refresh_backlink_callback_nvim'),
@@ -651,7 +651,7 @@ endfunc
 func! neuron#tags_add_select()
 	" TODO: use cache
 	" TODO: get rid of stderr redirect, use job_start instead
-	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --tags 2>/dev/null'
+	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --cached --tags 2>/dev/null'
 	let l:data = system(l:cmd)
 	let l:tags = json_decode(l:data)
 	if empty(l:tags)
@@ -673,7 +673,7 @@ func! neuron#tags_search()
 
 	"TODO: use cache
 	"TODO: remove stderr redirect
-	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --tag="'.l:tag.'" 2>/dev/null'
+	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --cached --tag="'.l:tag.'" 2>/dev/null'
 	let l:data = system(l:cmd)
 	let l:zettels = json_decode(data)
 	if empty(l:zettels)
